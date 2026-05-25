@@ -50,7 +50,7 @@ frame.__new__ as frame_new
     locals: object(subclass_of="&PyDict_Type")
         the locals dictionary
     *
-    last: object = None
+    back: object = None
         the previous stack frame
     lasti: object = None
         current precise instruction
@@ -60,11 +60,10 @@ Create a frame object.
 The thread state is set to that of the calling frame.
 [clinic start generated code]*/
 
-// TODO process last and check for recursion
 static PyObject *
 frame_new_impl(PyTypeObject *type, PyCodeObject *code, PyObject *globals,
-               PyObject *locals, PyObject *previous_frame, PyObject *lasti)
-/*[clinic end generated code: output=4cc20ac1126871cd input=19d6f03ed315bf03]*/
+               PyObject *locals, PyObject *back, PyObject *lasti)
+/*[clinic end generated code: output=de7db977bae20c05 input=4af1a34aa7843922]*/
 {
     PyFrameObject *frame = NULL;
     bool has_lasti = lasti != Py_None;

@@ -10,7 +10,7 @@ preserve
 #include "pycore_modsupport.h"    // _PyArg_UnpackKeywords()
 
 PyDoc_STRVAR(frame_new__doc__,
-"frame(code, globals, locals, *, previous_frame=None, lasti=None)\n"
+"frame(code, globals, locals, *, back=None, lasti=None)\n"
 "--\n"
 "\n"
 "Create a frame object.\n"
@@ -21,7 +21,7 @@ PyDoc_STRVAR(frame_new__doc__,
 "    the globals dictionary\n"
 "  locals\n"
 "    the locals dictionary\n"
-"  previous_frame\n"
+"  back\n"
 "    the previous stack frame\n"
 "  lasti\n"
 "    current precise instruction\n"
@@ -30,7 +30,7 @@ PyDoc_STRVAR(frame_new__doc__,
 
 static PyObject *
 frame_new_impl(PyTypeObject *type, PyCodeObject *code, PyObject *globals,
-               PyObject *locals, PyObject *previous_frame, PyObject *lasti);
+               PyObject *locals, PyObject *back, PyObject *lasti);
 
 static PyObject *
 frame_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
@@ -47,7 +47,7 @@ frame_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
     } _kwtuple = {
         .ob_base = PyVarObject_HEAD_INIT(&PyTuple_Type, NUM_KEYWORDS)
         .ob_hash = -1,
-        .ob_item = { &_Py_ID(code), &_Py_ID(globals), &_Py_ID(locals), &_Py_ID(previous_frame), &_Py_ID(lasti), },
+        .ob_item = { &_Py_ID(code), &_Py_ID(globals), &_Py_ID(locals), &_Py_ID(back), &_Py_ID(lasti), },
     };
     #undef NUM_KEYWORDS
     #define KWTUPLE (&_kwtuple.ob_base.ob_base)
@@ -56,7 +56,7 @@ frame_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
     #  define KWTUPLE NULL
     #endif  // !Py_BUILD_CORE
 
-    static const char * const _keywords[] = {"code", "globals", "locals", "previous_frame", "lasti", NULL};
+    static const char * const _keywords[] = {"code", "globals", "locals", "back", "lasti", NULL};
     static _PyArg_Parser _parser = {
         .keywords = _keywords,
         .fname = "frame",
@@ -70,7 +70,7 @@ frame_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
     PyCodeObject *code;
     PyObject *globals;
     PyObject *locals;
-    PyObject *previous_frame = NULL;
+    PyObject *back = Py_None;
     PyObject *lasti = Py_None;
 
     fastargs = _PyArg_UnpackKeywords(_PyTuple_CAST(args)->ob_item, nargs, kwargs, NULL, &_parser,
@@ -97,18 +97,14 @@ frame_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         goto skip_optional_kwonly;
     }
     if (fastargs[3]) {
-        if (!PyObject_TypeCheck(fastargs[3], &PyFrame_Type)) {
-            _PyArg_BadArgument("frame", "argument 'previous_frame'", (&PyFrame_Type)->tp_name, fastargs[3]);
-            goto exit;
-        }
-        previous_frame = fastargs[3];
+        back = fastargs[3];
         if (!--noptargs) {
             goto skip_optional_kwonly;
         }
     }
     lasti = fastargs[4];
 skip_optional_kwonly:
-    return_value = frame_new_impl(type, code, globals, locals, previous_frame, lasti);
+    return_value = frame_new_impl(type, code, globals, locals, back, lasti);
 
 exit:
     return return_value;
@@ -543,4 +539,4 @@ frame___sizeof__(PyObject *self, PyObject *Py_UNUSED(ignored))
 
     return return_value;
 }
-/*[clinic end generated code: output=e1ac05a855fd5d00 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=f71bce041512872f input=a9049054013a1b77]*/
