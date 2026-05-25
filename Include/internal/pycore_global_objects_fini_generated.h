@@ -1877,6 +1877,7 @@ _PyStaticObjects_CheckRefcnt(PyInterpreterState *interp) {
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(last_traceback));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(last_type));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(last_value));
+    _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(lasti));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(latin1));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(leaf_size));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(legacy));
@@ -1999,6 +2000,7 @@ _PyStaticObjects_CheckRefcnt(PyInterpreterState *interp) {
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(posix));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(prec));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(preserve_exc));
+    _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(previous_frame));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(print_file_and_line));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(priority));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(progress));

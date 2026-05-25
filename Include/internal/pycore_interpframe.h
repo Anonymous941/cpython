@@ -17,6 +17,9 @@ extern "C" {
 #define _PyInterpreterFrame_LASTI(IF) \
     ((int)((IF)->instr_ptr - _PyFrame_GetBytecode((IF))))
 
+#define _PyInterpreterFrame_INSTR_PTR(IF, LASTI) \
+    (_PyFrame_GetBytecode((IF)) + (LASTI))
+
 static inline PyCodeObject *_PyFrame_GetCode(_PyInterpreterFrame *f) {
     assert(!PyStackRef_IsNull(f->f_executable));
     PyObject *executable = PyStackRef_AsPyObjectBorrow(f->f_executable);

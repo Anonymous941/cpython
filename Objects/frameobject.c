@@ -9,6 +9,7 @@
 #include "pycore_function.h"      // _PyFunction_FromConstructor()
 #include "pycore_genobject.h"     // _PyGen_GetGeneratorFromFrame()
 #include "pycore_interpframe.h"   // _PyFrame_GetLocalsArray()
+#include "pycore_long.h"          // _PyLong_CAST(), _PyLong_IsNegative()
 #include "pycore_modsupport.h"    // _PyArg_CheckPositional()
 #include "pycore_object.h"        // _PyObject_GC_UNTRACK()
 #include "pycore_opcode_metadata.h" // _PyOpcode_Caches
@@ -37,6 +38,83 @@
 class frame "PyFrameObject *" "&PyFrame_Type"
 [clinic start generated code]*/
 /*[clinic end generated code: output=da39a3ee5e6b4b0d input=2d1dbf2e06cf351f]*/
+
+/*[clinic input]
+@classmethod
+frame.__new__ as frame_new
+
+    code: object(type="PyCodeObject *", subclass_of="&PyCode_Type")
+        a code object
+    globals: object(subclass_of="&PyDict_Type")
+        the globals dictionary
+    locals: object(subclass_of="&PyDict_Type")
+        the locals dictionary
+    *
+    last: object = None
+        the previous stack frame
+    lasti: object = None
+        current precise instruction
+
+Create a frame object.
+
+The thread state is set to that of the calling frame.
+[clinic start generated code]*/
+
+// TODO process last and check for recursion
+static PyObject *
+frame_new_impl(PyTypeObject *type, PyCodeObject *code, PyObject *globals,
+               PyObject *locals, PyObject *previous_frame, PyObject *lasti)
+/*[clinic end generated code: output=4cc20ac1126871cd input=19d6f03ed315bf03]*/
+{
+    PyFrameObject *frame = NULL;
+    bool has_lasti = lasti != Py_None;
+    int lasti_value = -1;
+
+    if (has_lasti) {
+        if (!PyLong_Check(lasti)) {
+            _PyArg_BadArgument("frame", "argument 'lasti'", "int or None", lasti);
+            return NULL;
+        }
+
+        int overflow;
+        long l_lasti_value = PyLong_AsLongAndOverflow(lasti, &overflow);
+        if (overflow < 0 || l_lasti_value < (long)(code->_co_firsttraceable * sizeof(_Py_CODEUNIT))) {
+            // TODO is this RuntimeError or ValueError?
+            PyErr_SetString(PyExc_ValueError, "cannot instantiate incomplete frame");
+            return NULL;
+        }
+        else if (overflow || l_lasti_value >= _PyCode_NBYTES(code)
+#if SIZEOF_LONG > SIZEOF_INT
+            || l_lasti_value > INT_MAX
+            || l_lasti_value < INT_MIN
+#endif
+) {
+            PyErr_SetString(PyExc_ValueError,
+                            "lasti out of range");
+            return NULL;
+        }
+        lasti_value = (int)l_lasti_value;
+
+        if (lasti_value > 0 && lasti_value % sizeof(_Py_CODEUNIT) != 0) {
+            PyErr_Format(PyExc_ValueError,
+                        "lasti must be a multiple of %zu",
+                        sizeof(_Py_CODEUNIT));
+            return NULL;
+        }
+    }
+
+    frame = PyFrame_New(_PyThreadState_GET(), code, globals, locals);
+    if (frame == NULL) {
+        return NULL;
+    }
+
+    if (has_lasti) {
+        PyUnstable_InterpreterFrame_SetLasti(frame->f_frame, lasti_value);
+    }
+    assert(!_PyFrame_IsIncomplete(frame->f_frame));
+
+    return (PyObject *)frame;
+}
 
 
 // Returns new reference or NULL
@@ -2100,6 +2178,12 @@ PyTypeObject PyFrame_Type = {
     frame_getsetlist,                           /* tp_getset */
     0,                                          /* tp_base */
     0,                                          /* tp_dict */
+    0,                                          /* tp_descr_get */
+    0,                                          /* tp_descr_set */
+    0,                                          /* tp_dictoffset */
+    0,                                          /* tp_init */
+    0,                                          /* tp_alloc */
+    frame_new,                                  /* tp_new */
 };
 
 static void
@@ -2131,7 +2215,6 @@ _PyFrame_New_NoTrack(PyCodeObject *code)
     return f;
 }
 
-/* Legacy API */
 PyFrameObject*
 PyFrame_New(PyThreadState *tstate, PyCodeObject *code,
             PyObject *globals, PyObject *locals)

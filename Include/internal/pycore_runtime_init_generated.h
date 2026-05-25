@@ -1875,6 +1875,7 @@ extern "C" {
     INIT_ID(last_traceback), \
     INIT_ID(last_type), \
     INIT_ID(last_value), \
+    INIT_ID(lasti), \
     INIT_ID(latin1), \
     INIT_ID(leaf_size), \
     INIT_ID(legacy), \
@@ -1997,6 +1998,7 @@ extern "C" {
     INIT_ID(posix), \
     INIT_ID(prec), \
     INIT_ID(preserve_exc), \
+    INIT_ID(previous_frame), \
     INIT_ID(print_file_and_line), \
     INIT_ID(priority), \
     INIT_ID(progress), \

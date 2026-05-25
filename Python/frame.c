@@ -143,6 +143,19 @@ PyUnstable_InterpreterFrame_GetLasti(struct _PyInterpreterFrame *frame)
     return _PyInterpreterFrame_LASTI(frame) * sizeof(_Py_CODEUNIT);
 }
 
+void
+PyUnstable_InterpreterFrame_SetLasti(struct _PyInterpreterFrame *frame, int value)
+{
+    if (value >= 0) {
+        assert(value % sizeof(_Py_CODEUNIT) == 0);
+        frame->instr_ptr = _PyInterpreterFrame_INSTR_PTR(frame, value / sizeof(_Py_CODEUNIT));
+        assert(PyUnstable_InterpreterFrame_GetLasti(frame) == value);
+    }
+    else {
+        frame->instr_ptr = _PyInterpreterFrame_INSTR_PTR(frame, -1);
+    }
+}
+
 int _Py_NO_SANITIZE_THREAD
 PyUnstable_InterpreterFrame_GetLine(_PyInterpreterFrame *frame)
 {

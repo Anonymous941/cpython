@@ -2,7 +2,117 @@
 preserve
 [clinic start generated code]*/
 
+#if defined(Py_BUILD_CORE) && !defined(Py_BUILD_CORE_MODULE)
+#  include "pycore_gc.h"          // PyGC_Head
+#  include "pycore_runtime.h"     // _Py_ID()
+#endif
 #include "pycore_critical_section.h"// Py_BEGIN_CRITICAL_SECTION()
+#include "pycore_modsupport.h"    // _PyArg_UnpackKeywords()
+
+PyDoc_STRVAR(frame_new__doc__,
+"frame(code, globals, locals, *, previous_frame=None, lasti=None)\n"
+"--\n"
+"\n"
+"Create a frame object.\n"
+"\n"
+"  code\n"
+"    a code object\n"
+"  globals\n"
+"    the globals dictionary\n"
+"  locals\n"
+"    the locals dictionary\n"
+"  previous_frame\n"
+"    the previous stack frame\n"
+"  lasti\n"
+"    current precise instruction\n"
+"\n"
+"The thread state is set to that of the calling frame.");
+
+static PyObject *
+frame_new_impl(PyTypeObject *type, PyCodeObject *code, PyObject *globals,
+               PyObject *locals, PyObject *previous_frame, PyObject *lasti);
+
+static PyObject *
+frame_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
+{
+    PyObject *return_value = NULL;
+    #if defined(Py_BUILD_CORE) && !defined(Py_BUILD_CORE_MODULE)
+
+    #define NUM_KEYWORDS 5
+    static struct {
+        PyGC_Head _this_is_not_used;
+        PyObject_VAR_HEAD
+        Py_hash_t ob_hash;
+        PyObject *ob_item[NUM_KEYWORDS];
+    } _kwtuple = {
+        .ob_base = PyVarObject_HEAD_INIT(&PyTuple_Type, NUM_KEYWORDS)
+        .ob_hash = -1,
+        .ob_item = { &_Py_ID(code), &_Py_ID(globals), &_Py_ID(locals), &_Py_ID(previous_frame), &_Py_ID(lasti), },
+    };
+    #undef NUM_KEYWORDS
+    #define KWTUPLE (&_kwtuple.ob_base.ob_base)
+
+    #else  // !Py_BUILD_CORE
+    #  define KWTUPLE NULL
+    #endif  // !Py_BUILD_CORE
+
+    static const char * const _keywords[] = {"code", "globals", "locals", "previous_frame", "lasti", NULL};
+    static _PyArg_Parser _parser = {
+        .keywords = _keywords,
+        .fname = "frame",
+        .kwtuple = KWTUPLE,
+    };
+    #undef KWTUPLE
+    PyObject *argsbuf[5];
+    PyObject * const *fastargs;
+    Py_ssize_t nargs = PyTuple_GET_SIZE(args);
+    Py_ssize_t noptargs = nargs + (kwargs ? PyDict_GET_SIZE(kwargs) : 0) - 3;
+    PyCodeObject *code;
+    PyObject *globals;
+    PyObject *locals;
+    PyObject *previous_frame = NULL;
+    PyObject *lasti = Py_None;
+
+    fastargs = _PyArg_UnpackKeywords(_PyTuple_CAST(args)->ob_item, nargs, kwargs, NULL, &_parser,
+            /*minpos*/ 3, /*maxpos*/ 3, /*minkw*/ 0, /*varpos*/ 0, argsbuf);
+    if (!fastargs) {
+        goto exit;
+    }
+    if (!PyObject_TypeCheck(fastargs[0], &PyCode_Type)) {
+        _PyArg_BadArgument("frame", "argument 'code'", (&PyCode_Type)->tp_name, fastargs[0]);
+        goto exit;
+    }
+    code = (PyCodeObject *)fastargs[0];
+    if (!PyDict_Check(fastargs[1])) {
+        _PyArg_BadArgument("frame", "argument 'globals'", "dict", fastargs[1]);
+        goto exit;
+    }
+    globals = fastargs[1];
+    if (!PyDict_Check(fastargs[2])) {
+        _PyArg_BadArgument("frame", "argument 'locals'", "dict", fastargs[2]);
+        goto exit;
+    }
+    locals = fastargs[2];
+    if (!noptargs) {
+        goto skip_optional_kwonly;
+    }
+    if (fastargs[3]) {
+        if (!PyObject_TypeCheck(fastargs[3], &PyFrame_Type)) {
+            _PyArg_BadArgument("frame", "argument 'previous_frame'", (&PyFrame_Type)->tp_name, fastargs[3]);
+            goto exit;
+        }
+        previous_frame = fastargs[3];
+        if (!--noptargs) {
+            goto skip_optional_kwonly;
+        }
+    }
+    lasti = fastargs[4];
+skip_optional_kwonly:
+    return_value = frame_new_impl(type, code, globals, locals, previous_frame, lasti);
+
+exit:
+    return return_value;
+}
 
 PyDoc_STRVAR(frame_locals__doc__,
 "Return the mapping used by the frame to look up local variables.");
@@ -433,4 +543,4 @@ frame___sizeof__(PyObject *self, PyObject *Py_UNUSED(ignored))
 
     return return_value;
 }
-/*[clinic end generated code: output=74abf652547c0c11 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=e1ac05a855fd5d00 input=a9049054013a1b77]*/

@@ -32,6 +32,10 @@ PyAPI_FUNC(PyObject *) PyUnstable_InterpreterFrame_GetCode(struct _PyInterpreter
  * Does not raise an exception. */
 PyAPI_FUNC(int) PyUnstable_InterpreterFrame_GetLasti(struct _PyInterpreterFrame *frame);
 
+/* Sets the byte offset into the last executed instruction.
+ * Does not raise an exception. */
+PyAPI_FUNC(void) PyUnstable_InterpreterFrame_SetLasti(struct _PyInterpreterFrame *frame, int value);
+
 /* Returns the currently executing line number, or -1 if there is no line number.
  * Does not raise an exception. */
 PyAPI_FUNC(int) PyUnstable_InterpreterFrame_GetLine(struct _PyInterpreterFrame *frame);
