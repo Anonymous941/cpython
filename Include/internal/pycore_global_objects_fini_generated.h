@@ -1599,6 +1599,7 @@ _PyStaticObjects_CheckRefcnt(PyInterpreterState *interp) {
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(athrow));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(attribute));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(autocommit));
+    _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(back));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(backtick));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(base));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(before));
@@ -2000,7 +2001,6 @@ _PyStaticObjects_CheckRefcnt(PyInterpreterState *interp) {
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(posix));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(prec));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(preserve_exc));
-    _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(previous_frame));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(print_file_and_line));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(priority));
     _PyStaticObject_CheckRefcnt((PyObject *)&_Py_ID(progress));

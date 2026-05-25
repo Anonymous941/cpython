@@ -1597,6 +1597,7 @@ extern "C" {
     INIT_ID(athrow), \
     INIT_ID(attribute), \
     INIT_ID(autocommit), \
+    INIT_ID(back), \
     INIT_ID(backtick), \
     INIT_ID(base), \
     INIT_ID(before), \
@@ -1998,7 +1999,6 @@ extern "C" {
     INIT_ID(posix), \
     INIT_ID(prec), \
     INIT_ID(preserve_exc), \
-    INIT_ID(previous_frame), \
     INIT_ID(print_file_and_line), \
     INIT_ID(priority), \
     INIT_ID(progress), \
