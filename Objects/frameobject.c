@@ -66,10 +66,22 @@ frame_new_impl(PyTypeObject *type, PyCodeObject *code, PyObject *globals,
 /*[clinic end generated code: output=de7db977bae20c05 input=4af1a34aa7843922]*/
 {
     PyFrameObject *frame = NULL;
-    bool has_lasti = lasti != Py_None;
-    int lasti_value = -1;
 
-    if (has_lasti) {
+    frame = PyFrame_New(_PyThreadState_GET(), code, globals, locals);
+    if (frame == NULL) {
+        return NULL;
+    }
+
+    if (back != Py_None) {
+        if (!PyFrame_Check(back)) {
+            _PyArg_BadArgument("frame", "argument 'back'", "frame or None", back);
+            return NULL;
+        }
+
+        frame->f_back = (PyFrameObject *)Py_NewRef(back);
+    }
+
+    if (lasti != Py_None) {
         if (!PyLong_Check(lasti)) {
             _PyArg_BadArgument("frame", "argument 'lasti'", "int or None", lasti);
             return NULL;
@@ -92,7 +104,7 @@ frame_new_impl(PyTypeObject *type, PyCodeObject *code, PyObject *globals,
                             "lasti out of range");
             return NULL;
         }
-        lasti_value = (int)l_lasti_value;
+        int lasti_value = (int)l_lasti_value;
 
         if (lasti_value > 0 && lasti_value % sizeof(_Py_CODEUNIT) != 0) {
             PyErr_Format(PyExc_ValueError,
@@ -100,17 +112,10 @@ frame_new_impl(PyTypeObject *type, PyCodeObject *code, PyObject *globals,
                         sizeof(_Py_CODEUNIT));
             return NULL;
         }
-    }
 
-    frame = PyFrame_New(_PyThreadState_GET(), code, globals, locals);
-    if (frame == NULL) {
-        return NULL;
-    }
-
-    if (has_lasti) {
         PyUnstable_InterpreterFrame_SetLasti(frame->f_frame, lasti_value);
+        assert(!_PyFrame_IsIncomplete(frame->f_frame));
     }
-    assert(!_PyFrame_IsIncomplete(frame->f_frame));
 
     return (PyObject *)frame;
 }
