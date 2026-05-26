@@ -146,14 +146,10 @@ PyUnstable_InterpreterFrame_GetLasti(struct _PyInterpreterFrame *frame)
 void
 PyUnstable_InterpreterFrame_SetLasti(struct _PyInterpreterFrame *frame, int value)
 {
-    if (value >= 0) {
-        assert(value % sizeof(_Py_CODEUNIT) == 0);
-        frame->instr_ptr = _PyInterpreterFrame_INSTR_PTR(frame, value / sizeof(_Py_CODEUNIT));
-        assert(PyUnstable_InterpreterFrame_GetLasti(frame) == value);
-    }
-    else {
-        frame->instr_ptr = _PyInterpreterFrame_INSTR_PTR(frame, -1);
-    }
+    assert(value >= 0);
+    assert(value % sizeof(_Py_CODEUNIT) == 0);
+    frame->instr_ptr = _PyInterpreterFrame_INSTR_PTR(frame, value / sizeof(_Py_CODEUNIT));
+    assert(PyUnstable_InterpreterFrame_GetLasti(frame) == value);
 }
 
 int _Py_NO_SANITIZE_THREAD
